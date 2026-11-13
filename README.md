@@ -82,13 +82,26 @@ Skills installed with `npx skills add` are stored by name, so a second skill wit
 
 </details>
 
-### Claude on the web, desktop and mobile
+### Claude Desktop
 
-Add VidNavigator as a custom connector: **Customize → Connectors → Add custom connector**, with the address `https://api.vidnavigator.com/mcp/` and, under **Request headers**, `X-API-Key` set to your API key. Claude then has every VidNavigator tool in any conversation.
+Open **Settings → Developer → Edit Config**, add the server to `claude_desktop_config.json`, and restart Claude Desktop. It needs Node.js 18 or later:
 
-### ChatGPT
+```json
+{
+  "mcpServers": {
+    "vidnavigator": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://api.vidnavigator.com/mcp/", "--header", "X-API-Key:YOUR_API_KEY"]
+    }
+  }
+}
+```
 
-Not available: ChatGPT only connects to MCP servers that sign in with OAuth, and VidNavigator uses an API key.
+Keep `X-API-Key:` and the key together, with no space.
+
+### Claude on the web and mobile, ChatGPT
+
+Not available for most accounts: their connectors sign in with OAuth, and VidNavigator uses an API key. Claude lets a limited set of organizations send an API key as a request header: if your **Add custom connector** dialog has a **Request headers** section, follow the [setup guide](https://docs.vidnavigator.com/mcp-server#claude-on-the-web-and-mobile).
 
 ### Any other MCP client
 
