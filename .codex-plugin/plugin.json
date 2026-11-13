@@ -1,6 +1,6 @@
 {
   "name": "vidnavigator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Video skills for your agent: read what is said in any online video, find the moment someone said something, search TikTok and TikTok LIVE, and turn hundreds of videos into a spreadsheet. YouTube, TikTok, Instagram, X, Facebook, Vimeo and more. Nothing to install locally: no yt-dlp, no ffmpeg.",
   "author": {
     "name": "VidNavigator",

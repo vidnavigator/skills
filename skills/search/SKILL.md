@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs a VidNavigator API key, and either the VidNavigator MCP server or Node.js 18+ with network access to api.vidnavigator.com.
 metadata:
   author: VidNavigator
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 # Search videos

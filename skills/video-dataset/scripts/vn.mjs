@@ -17,7 +17,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 
-const VERSION = '1.0.0';
+const VERSION = '1.0.1';
 const SERVER_URL = process.env.VIDNAVIGATOR_MCP_URL || 'https://api.vidnavigator.com/mcp/';
 const KEY_FILE = join(homedir(), '.config', 'vidnavigator', 'api_key');
 const KEY_PAGE = 'https://vidnavigator.com/studio/api';
@@ -85,6 +85,17 @@ async function rpc(method, params, apiKey) {
   }
 
   const text = await response.text();
+  if (response.status === 401) {
+    // The server refuses a tool call whose key it does not know.
+    throw new CliError(
+      `The API key was refused: it is not valid, or it has been deleted.
+` +
+        `Check it, or create one, at ${KEY_PAGE}
+` +
+        `then set VIDNAVIGATOR_API_KEY or save the key in ${KEY_FILE}`,
+      EXIT_NO_KEY,
+    );
+  }
   let body;
   try {
     body = JSON.parse(text);
