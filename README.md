@@ -112,6 +112,15 @@ Keep `X-API-Key:` and the key together, with no space.
 
 </details>
 
+### ChatGPT
+
+No API key to copy: ChatGPT signs you in to your VidNavigator account.
+
+1. On [chatgpt.com/plugins](https://chatgpt.com/plugins), select **+**, then **Add custom MCP server**.
+2. Name it VidNavigator, enter the server URL `https://api.vidnavigator.com/mcp/`, and choose **OAuth** for authentication.
+3. Accept the warning, select **Create as a plugin**, then install it.
+4. In a conversation, use the plugin: sign in to VidNavigator and click **Allow**.
+
 ### Any other MCP client
 
 The MCP server is hosted at `https://api.vidnavigator.com/mcp/` and takes the key in an `X-API-Key` header (or `Authorization: Bearer`). A client that supports OAuth can leave the key out: the server then asks it to sign the user in. The exact file depends on the client; for most of them:
@@ -177,7 +186,7 @@ Every call draws from your VidNavigator [credits](https://vidnavigator.com/prici
 
 VidNavigator is also a REST API with [Python](https://github.com/vidnavigator/vidnavigator-python) and [JavaScript](https://github.com/vidnavigator/vidnavigator-js) SDKs: [docs.vidnavigator.com](https://docs.vidnavigator.com). The `vidnavigator-api` skill teaches your coding agent to use them.
 
-Working on this repository:
+Working on this repository (`chatgpt/` holds the package for the ChatGPT plugin directory, see [its README](chatgpt/README.md)):
 
 ```bash
 node scripts/check.mjs      # validates every skill and the manifests

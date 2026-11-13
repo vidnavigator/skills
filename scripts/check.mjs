@@ -105,6 +105,14 @@ for (const skill of skills) {
   }
 }
 
+// --- ChatGPT package ------------------------------------------------------
+
+try {
+  execFileSync(process.execPath, [join(root, 'scripts', 'build-chatgpt.mjs'), '--check'], { stdio: 'pipe' });
+} catch (error) {
+  fail('chatgpt/', `${error.stderr || error.message}`.trim());
+}
+
 // --- Manifests ------------------------------------------------------------
 
 function readJson(relative) {

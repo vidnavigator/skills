@@ -1,0 +1,103 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "vidnavigator",
+  "version": "1.0.0",
+  "description": "Read what is said in online videos, search YouTube and TikTok, and extract structured data from videos, through the hosted VidNavigator MCP server.",
+  "author": {
+    "name": "VidNavigator",
+    "email": "support@vidnavigator.com",
+    "url": "https://vidnavigator.com"
+  },
+  "homepage": "https://docs.vidnavigator.com/mcp-server",
+  "repository": "https://github.com/vidnavigator/skills",
+  "license": "MIT",
+  "keywords": ["video", "transcript", "youtube", "tiktok", "instagram", "transcription", "data extraction"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "VidNavigator",
+        "shortDescription": "Read and search online videos",
+        "longDescription": "VidNavigator lets ChatGPT read what is said in online videos, and the data around them.\n\nShare a link and ask: ChatGPT reads the transcript of a YouTube, TikTok, Instagram, X, Facebook, Vimeo, Dailymotion, Loom, Rumble or Snapchat video and answers with timestamps. When a video has no captions, VidNavigator transcribes its audio, whatever its length (YouTube excepted).\n\nWhat ChatGPT can do with it:\n- Transcripts and speech-to-text: the full text of a video, as timestamped segments.\n- Summaries and questions: a summary, the people and subjects mentioned, or the answer to a question with the passage it comes from.\n- Structured data: the fields you define (product, price, claims, sentiment...) extracted from one video or from many, ready for a table.\n- YouTube search: videos ranked by how well their content matches a request, with the moment that matches, including videos that support or contradict a claim.\n- TikTok research: keyword search by country, period and popularity, the videos of an account, the LIVE rooms broadcasting right now and their latest comments.\n- Posts on X: the claim a post makes, including its attached video or images.\n- Your files: search, summarize and extract data from the audio and video files you uploaded to VidNavigator.\n\nVidNavigator reads speech and video details (title, creator, date, views). It does not look at the picture: text on screen and silent footage are out of reach.\n\nYou connect by signing in to your VidNavigator account and allowing ChatGPT. Every tool is read-only: ChatGPT cannot upload, change or delete anything in your account, and you can end the connection at any time in VidNavigator Studio.",
+        "developerName": "VidNavigator",
+        "category": "Productivity",
+        "capabilities": [
+          "Read the transcript of an online video",
+          "Transcribe the audio of videos without captions",
+          "Summarize a video or answer a question about it, with timestamps",
+          "Extract structured data from videos",
+          "Search YouTube for videos and the moment that matches",
+          "Search TikTok videos, accounts and LIVE rooms",
+          "Search and analyze your uploaded audio and video files"
+        ],
+        "websiteURL": "https://vidnavigator.com",
+        "supportURL": "https://vidnavigator.com/contact",
+        "privacyPolicyURL": "https://vidnavigator.com/privacy",
+        "termsOfServiceURL": "https://vidnavigator.com/terms",
+        "defaultPrompt": [
+          "Summarize this video in five points, with timestamps: https://www.youtube.com/watch?v=iG9CE55wbtY",
+          "Find the most liked TikToks about creatine gummies this month",
+          "Find a YouTube video where Neil deGrasse Tyson explains gravity"
+        ],
+        "composerIcon": "./assets/logo.png",
+        "logo": "./assets/logo.png"
+      },
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Summarize a YouTube video from its transcript, with timestamps.",
+              "prompt": "Summarize this talk in five points, with a timestamp for each: https://www.youtube.com/watch?v=iG9CE55wbtY",
+              "tools_triggered": ["get_video_transcript"],
+              "expected_behavior": "ChatGPT reads the transcript of Sir Ken Robinson's TED talk \"Do schools kill creativity?\" (about 20 minutes) and answers with five points, each with an m:ss timestamp taken from the transcript."
+            },
+            {
+              "description": "Extract structured fields from a video.",
+              "prompt": "From this talk, extract the speaker's name, the main thesis in one sentence, and the people mentioned: https://www.youtube.com/watch?v=iG9CE55wbtY",
+              "tools_triggered": ["extract_video_data", "get_task_status"],
+              "expected_behavior": "extract_video_data starts a background task; get_task_status returns the extracted fields. ChatGPT gives the speaker (Ken Robinson), a one-sentence thesis about schools and creativity, and a list of people mentioned in the talk, such as Gillian Lynne."
+            },
+            {
+              "description": "Search YouTube for a video and the passage that matches the request.",
+              "prompt": "Find a YouTube video where Neil deGrasse Tyson explains gravity, and link the exact moment.",
+              "tools_triggered": ["search_videos"],
+              "expected_behavior": "ChatGPT lists a few YouTube videos of Neil deGrasse Tyson talking about gravity, each with its channel, date, why it matches, and a youtu.be link with a ?t= timestamp at the matching passage."
+            },
+            {
+              "description": "Search TikTok by keyword, country, period and popularity.",
+              "prompt": "Find the five most liked TikToks about creatine gummies this month in the UK.",
+              "tools_triggered": ["search_tiktok", "get_task_status"],
+              "expected_behavior": "search_tiktok runs with sort_by most_liked, a one-month window and country gb; get_task_status returns the videos. ChatGPT gives a table of five TikToks with link, creator, date, views and likes, and states the query, country and period it searched."
+            },
+            {
+              "description": "List the latest videos of a TikTok account.",
+              "prompt": "List the last three videos posted by https://www.tiktok.com/@nasa",
+              "tools_triggered": ["scrape_tiktok_profile", "get_task_status"],
+              "expected_behavior": "scrape_tiktok_profile runs with max_posts 3; get_task_status returns the videos. ChatGPT lists three recent videos of the NASA TikTok account with link, publication date, views and likes."
+            }
+          ],
+          "negative": [
+            {
+              "description": "A request unrelated to videos must not call VidNavigator.",
+              "prompt": "What is the capital of Australia?",
+              "expected_behavior": "ChatGPT answers (Canberra) without calling any VidNavigator tool."
+            },
+            {
+              "description": "A request to delete files must be declined: every VidNavigator tool is read-only.",
+              "prompt": "Delete all the files I uploaded to VidNavigator.",
+              "expected_behavior": "ChatGPT explains that the VidNavigator tools can only read files and cannot delete them, and that files are managed in VidNavigator Studio. No file is deleted."
+            },
+            {
+              "description": "A request to generate a video is outside what VidNavigator does.",
+              "prompt": "Use VidNavigator to create a 30-second video of a cat playing the piano.",
+              "expected_behavior": "ChatGPT explains that VidNavigator reads and searches existing videos and cannot create one. No VidNavigator tool is called, or only to clarify what it can do."
+            }
+          ]
+        },
+        "demo_recording_url": "TODO: link to the demo video"
+      },
+      "publication": {
+        "release_notes": "First release: transcripts, speech-to-text, summaries and questions, structured data extraction, YouTube and TikTok search, TikTok LIVE, posts on X, and uploaded files."
+      }
+    }
+  }
+}
