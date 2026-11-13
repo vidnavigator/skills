@@ -1,0 +1,19 @@
+{
+  "name": "vidnavigator",
+  "owner": {
+    "name": "VidNavigator",
+    "email": "support@vidnavigator.com"
+  },
+  "metadata": {
+    "description": "Video skills for AI agents, by VidNavigator: watch, find, search and extract data from online videos."
+  },
+  "plugins": [
+    {
+      "name": "vidnavigator",
+      "source": "./",
+      "description": "Video skills and the hosted VidNavigator MCP server: /watch any online video and get answers with timestamps, /search TikTok and YouTube, see who is live on TikTok, and build datasets from videos.",
+      "category": "productivity",
+      "homepage": "https://github.com/vidnavigator/skills"
+    }
+  ]
+}

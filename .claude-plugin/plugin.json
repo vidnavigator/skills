@@ -1,0 +1,49 @@
+{
+  "name": "vidnavigator",
+  "displayName": "VidNavigator",
+  "version": "1.0.0",
+  "description": "Video skills for your agent: read what is said in any online video, find the moment someone said something, search TikTok and TikTok LIVE, and turn hundreds of videos into a spreadsheet. YouTube, TikTok, Instagram, X, Facebook, Vimeo and more. Nothing to install locally: no yt-dlp, no ffmpeg.",
+  "author": {
+    "name": "VidNavigator",
+    "email": "support@vidnavigator.com",
+    "url": "https://vidnavigator.com"
+  },
+  "homepage": "https://github.com/vidnavigator/skills",
+  "repository": "https://github.com/vidnavigator/skills",
+  "license": "MIT",
+  "icon": ".claude-plugin/icon.png",
+  "documentationUrl": "https://docs.vidnavigator.com/mcp-server",
+  "supportUrl": "https://github.com/vidnavigator/skills/issues",
+  "privacyPolicyUrl": "https://vidnavigator.com/privacy",
+  "termsOfServiceUrl": "https://vidnavigator.com/terms",
+  "keywords": [
+    "video",
+    "watch",
+    "youtube",
+    "tiktok",
+    "instagram",
+    "transcript",
+    "transcription",
+    "tiktok-search",
+    "data-extraction",
+    "mcp"
+  ],
+  "userConfig": {
+    "api_key": {
+      "type": "string",
+      "title": "VidNavigator API key",
+      "description": "Create one in VidNavigator Studio, under API (https://vidnavigator.com/studio/api). It starts with vna_.",
+      "sensitive": true,
+      "required": true
+    }
+  },
+  "mcpServers": {
+    "vidnavigator": {
+      "type": "http",
+      "url": "https://api.vidnavigator.com/mcp/",
+      "headers": {
+        "X-API-Key": "${user_config.api_key}"
+      }
+    }
+  }
+}

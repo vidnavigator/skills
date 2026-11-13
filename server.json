@@ -1,0 +1,25 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.vidnavigator/mcp",
+  "description": "Transcripts, search and structured data from YouTube, TikTok, Instagram, X and other videos.",
+  "version": "1.2.0",
+  "repository": {
+    "url": "https://github.com/vidnavigator/skills",
+    "source": "github"
+  },
+  "websiteUrl": "https://docs.vidnavigator.com/mcp-server",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://api.vidnavigator.com/mcp/",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "description": "Your VidNavigator API key, created at https://vidnavigator.com/studio/api",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "vidnavigator",
+  "interface": {
+    "displayName": "VidNavigator"
+  },
+  "plugins": [
+    {
+      "name": "vidnavigator",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/vidnavigator/skills.git"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

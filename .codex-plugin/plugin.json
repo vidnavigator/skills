@@ -1,0 +1,45 @@
+{
+  "name": "vidnavigator",
+  "version": "1.0.0",
+  "description": "Video skills for your agent: read what is said in any online video, find the moment someone said something, search TikTok and TikTok LIVE, and turn hundreds of videos into a spreadsheet. YouTube, TikTok, Instagram, X, Facebook, Vimeo and more. Nothing to install locally: no yt-dlp, no ffmpeg.",
+  "author": {
+    "name": "VidNavigator",
+    "email": "support@vidnavigator.com",
+    "url": "https://vidnavigator.com"
+  },
+  "homepage": "https://github.com/vidnavigator/skills",
+  "repository": "https://github.com/vidnavigator/skills",
+  "license": "MIT",
+  "keywords": [
+    "video",
+    "watch",
+    "youtube",
+    "tiktok",
+    "instagram",
+    "transcript",
+    "transcription",
+    "tiktok-search",
+    "data-extraction"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "VidNavigator",
+    "shortDescription": "Give your agent online video: paste a link and ask, search TikTok, build datasets.",
+    "longDescription": "Skills that read what is said in online videos (YouTube, TikTok, Instagram, X, Facebook, Vimeo and more), find the moment someone said something, search TikTok and TikTok LIVE, and extract the same fields from hundreds of videos into a file. The videos are read by the VidNavigator API, so nothing is downloaded or installed locally. Needs a VidNavigator API key in VIDNAVIGATOR_API_KEY.",
+    "developerName": "VidNavigator",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read"
+    ],
+    "websiteURL": "https://vidnavigator.com",
+    "privacyPolicyURL": "https://vidnavigator.com/privacy",
+    "termsOfServiceURL": "https://vidnavigator.com/terms",
+    "defaultPrompt": [
+      "Watch https://www.youtube.com/watch?v=jNQXAC9IVRw and tell me what he says about the elephants",
+      "Find the most liked TikToks about creatine gummies this week",
+      "Find a video where Neil deGrasse Tyson explains gravity, and link the moment"
+    ],
+    "brandColor": "#0070F3"
+  }
+}

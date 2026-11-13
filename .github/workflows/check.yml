@@ -1,0 +1,23 @@
+name: Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # 18 is the oldest Node.js the bundled CLI supports.
+        node: ['18', '26']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Skills, manifests and CLI copies
+        run: node scripts/check.mjs
+      - name: The CLI starts
+        run: node skills/watch/scripts/vn.mjs --version
