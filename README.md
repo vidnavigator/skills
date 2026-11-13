@@ -82,7 +82,18 @@ Skills installed with `npx skills add` are stored by name, so a second skill wit
 
 </details>
 
-### Claude Desktop
+### Claude on the web, desktop and mobile
+
+No API key to copy: Claude signs you in to your VidNavigator account.
+
+1. In Claude, open **Customize → Connectors**, select **Add**, then **Add custom connector**.
+2. Enter a name and the address `https://api.vidnavigator.com/mcp/`. Keep the sign-in choice that Claude detects, add no request header, and click **Add**.
+3. Click **Connect**, sign in to VidNavigator and click **Allow**.
+
+Claude then has every VidNavigator tool, in the browser, in Claude Desktop and in the mobile apps. It gets read access on the credits of your plan, and the connection can be ended at any time in [Studio → API](https://vidnavigator.com/studio/api).
+
+<details>
+<summary>Claude Desktop with an API key instead</summary>
 
 Open **Settings → Developer → Edit Config**, add the server to `claude_desktop_config.json`, and restart Claude Desktop. It needs Node.js 18 or later:
 
@@ -99,13 +110,11 @@ Open **Settings → Developer → Edit Config**, add the server to `claude_deskt
 
 Keep `X-API-Key:` and the key together, with no space.
 
-### Claude on the web and mobile, ChatGPT
-
-Not available for most accounts: their connectors sign in with OAuth, and VidNavigator uses an API key. Claude lets a limited set of organizations send an API key as a request header: if your **Add custom connector** dialog has a **Request headers** section, follow the [setup guide](https://docs.vidnavigator.com/mcp-server#claude-on-the-web-and-mobile).
+</details>
 
 ### Any other MCP client
 
-The MCP server is hosted at `https://api.vidnavigator.com/mcp/` and takes the key in an `X-API-Key` header (or `Authorization: Bearer`). The exact file depends on the client; for most of them:
+The MCP server is hosted at `https://api.vidnavigator.com/mcp/` and takes the key in an `X-API-Key` header (or `Authorization: Bearer`). A client that supports OAuth can leave the key out: the server then asks it to sign the user in. The exact file depends on the client; for most of them:
 
 ```json
 {

@@ -15,8 +15,8 @@
       "headers": [
         {
           "name": "X-API-Key",
-          "description": "Your VidNavigator API key, created at https://vidnavigator.com/studio/api",
-          "isRequired": true,
+          "description": "Your VidNavigator API key, created at https://vidnavigator.com/studio/api. Without it, the server asks the client to sign in with OAuth.",
+          "isRequired": false,
           "isSecret": true
         }
       ]
