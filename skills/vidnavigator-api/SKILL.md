@@ -4,7 +4,7 @@ description: Writes code that uses the VidNavigator API and its Python and JavaS
 license: MIT
 metadata:
   author: VidNavigator
-  version: "1.0.1"
+  version: "1.1.0"
 ---
 
 # Build with the VidNavigator API
@@ -39,6 +39,7 @@ const vn = new VidNavigatorClient({ apiKey: process.env.VIDNAVIGATOR_API_KEY! })
 |---|---|---|---|
 | Captions of a video (YouTube, TikTok, X, Facebook, Vimeo, Dailymotion, Loom, Snapchat) | `client.get_transcript(video_url=...)` | `vn.getTranscript({ video_url })` | `POST /transcript` |
 | Speech-to-text when there are no captions (Instagram, and any platform but YouTube) | `client.transcribe_video(video_url=...)` | `vn.transcribe(url)` | `POST /transcribe/async` |
+| What a video shows, scene by scene, next to its transcript | `client.watch_video(video_url=...)` | `vn.watch(url)` | `POST /watch/async` |
 | Summary, people, subjects, or an answer to a question | `client.analyze_video(video_url=..., query=...)` | `vn.analyzeVideo({ video_url, query })` | `POST /analyze/video` |
 | Your own fields out of a video, as JSON | `client.extract_video_data(video_url=..., schema=...)` | `vn.extractVideo({ video_url, schema })` | `POST /extract/video/async` |
 | YouTube videos for a query, ranked, with the best moment | `client.search_youtube(query=..., max_results=...)` | `vn.searchYouTube({ query, max_results })` | `POST /youtube/search` |
@@ -128,7 +129,7 @@ Waiting for a job that outlasts its timeout raises `JobTimeoutError` (Python) or
 
 ## Good practice
 
-- The API reads what is **said** in a video and its details, not the picture.
+- Transcripts, analysis and extraction read what is **said** in a video and its details. What it **shows** (the scenes and the text on screen) comes from `watch`.
 - Test with one short video before a batch, and bound every search with `max_results`.
 - Pass `include_usage=True` to see what a call consumed; what each operation costs: https://docs.vidnavigator.com/api-reference/usage-costs.md
 - Rate limits per endpoint: https://docs.vidnavigator.com/api-reference/rate-limiting.md. On `429`, wait and retry with backoff.
