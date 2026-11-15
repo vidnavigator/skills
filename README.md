@@ -1,6 +1,6 @@
 # VidNavigator skills: video for AI agents
 
-**Paste a video link and ask.** Your agent reads what is said in the video and answers with timestamps. YouTube, TikTok, Instagram, X, Facebook, Vimeo, Dailymotion, Loom, Rumble and Snapchat, videos of any length.
+**Paste a video link and ask.** Your agent reads what is said and what is shown in the video, and answers with timestamps. YouTube, TikTok, Instagram, X, Facebook, Vimeo, Dailymotion, Loom, Rumble and Snapchat, videos of any length.
 
 ```text
 /watch https://www.youtube.com/watch?v=jNQXAC9IVRw what does he say about the elephants?
@@ -17,7 +17,7 @@ Or just say it: *"transcribe this Instagram reel and give me the three key point
 
 | Skill | Use it like this | What the agent does |
 |---|---|---|
-| [`watch`](skills/watch/SKILL.md) | `/watch <link> [question]` | Reads the captions, or runs speech-to-text when there are none (Instagram, for instance), and answers with timestamps |
+| [`watch`](skills/watch/SKILL.md) | `/watch <link> [question]` | Reads what the video says and what it shows, scene by scene, with the text on screen, and answers with timestamps |
 | [`search`](skills/search/SKILL.md) | `/search tiktok <keywords>` | The latest or most liked TikToks for a keyword, by country and period, or the videos of one account, with views, likes, comments and shares. No TikTok login needed |
 | | `/search youtube <request>` | Finds YouTube videos and links the passage that matches: a quote, an explanation, or videos for and against a claim or a post on X |
 | [`tiktok-live`](skills/tiktok-live/SKILL.md) | `/tiktok-live <keywords>` or `/tiktok-live @creator` | The LIVE rooms broadcasting right now for a keyword, and one room with its viewers and latest comments |
@@ -174,7 +174,8 @@ node skills/watch/scripts/vn.mjs setup
 ## What it reads, and what it does not
 
 - It reads what is **said** in a video (the platform's captions, or speech-to-text when there are none) and the video's details: title, creator, date, views, likes.
-- It does **not** look at the picture. Text on screen, charts and silent footage are out of reach. If you need frames, [claude-video](https://github.com/bradautomates/claude-video) extracts them on your machine with yt-dlp and ffmpeg.
+- `/watch` also reads what is **shown**: the scenes, each with a description of the picture and the text on screen. The picture is followed scene by scene, so something visible for an instant can be missed. The other skills work from what is said.
+- A live stream, or a clip of a few seconds, has no picture to read; `/watch` then answers from the speech.
 - A private, deleted, age-restricted or region-locked video returns an error, which the agent reports as it is.
 - A YouTube video without captions cannot be transcribed. Every other platform can.
 

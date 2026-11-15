@@ -17,7 +17,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 
-const VERSION = '1.0.1';
+const VERSION = '1.1.0';
 const SERVER_URL = process.env.VIDNAVIGATOR_MCP_URL || 'https://api.vidnavigator.com/mcp/';
 const KEY_FILE = join(homedir(), '.config', 'vidnavigator', 'api_key');
 const KEY_PAGE = 'https://vidnavigator.com/studio/api';
@@ -277,31 +277,41 @@ function clock(seconds, withHours) {
 const isSegmentList = (value) =>
   Array.isArray(value) && value.length > 0 && value.every((item) => item && typeof item === 'object' && typeof item.text === 'string');
 
-// Every transcript in a result, with the details of its video when they sit beside it.
+// The scenes of a watched video: what the picture shows between two moments.
+const isSceneList = (value) =>
+  Array.isArray(value) && value.length > 0 && value.every((item) => item && typeof item === 'object' && typeof item.description === 'string');
+
+// Every transcript in a result, with the details of its video when they sit beside it, and the
+// scenes of the video when the result comes from watch_video. A video without speech is kept
+// for its scenes.
 function findTranscripts(node, found = []) {
   if (Array.isArray(node)) {
     for (const item of node) findTranscripts(item, found);
   } else if (node && typeof node === 'object') {
-    const transcript = node.transcript;
-    if (isSegmentList(transcript) || (typeof transcript === 'string' && transcript.trim())) {
-      found.push({ transcript, info: node.video_info || node.file_info || {} });
+    const hasText = isSegmentList(node.transcript) || (typeof node.transcript === 'string' && node.transcript.trim());
+    const scenes = isSceneList(node.scenes) ? node.scenes : null;
+    if (hasText || scenes) {
+      found.push({
+        transcript: hasText ? node.transcript : null,
+        scenes,
+        noTranscript: !hasText && node.transcript_error ? node.transcript_error.message || node.transcript_error.error : null,
+        info: node.video_info || node.file_info || {},
+      });
     }
     for (const [key, value] of Object.entries(node)) {
-      if (key !== 'transcript') findTranscripts(value, found);
+      if (key !== 'transcript' && key !== 'scenes') findTranscripts(value, found);
     }
   }
   return found;
 }
 
 // Segments of a few seconds are joined into blocks of about 30 seconds: fewer lines, same timestamps.
-function renderSegments(segments) {
-  const last = segments[segments.length - 1];
-  const withHours = Number(last.end ?? last.start ?? 0) >= 3600;
-  const lines = [];
+function segmentBlocks(segments) {
+  const blocks = [];
   let blockStart = null;
   let words = [];
   const flush = () => {
-    if (words.length) lines.push(`[${clock(blockStart, withHours)}] ${words.join(' ')}`);
+    if (words.length) blocks.push({ start: blockStart, text: words.join(' ') });
     words = [];
     blockStart = null;
   };
@@ -313,12 +323,42 @@ function renderSegments(segments) {
     if (text) words.push(text);
   }
   flush();
+  return blocks;
+}
+
+function renderSegments(segments) {
+  const last = segments[segments.length - 1];
+  const withHours = Number(last.end ?? last.start ?? 0) >= 3600;
+  return segmentBlocks(segments)
+    .map((block) => `[${clock(block.start, withHours)}] ${block.text}`)
+    .join('\n');
+}
+
+// What is said and what is shown, in the order of the video. A scene is one line marked
+// (picture): what is visible, then the text read on screen.
+function renderTimeline(transcript, scenes) {
+  const segments = isSegmentList(transcript) ? transcript : [];
+  const latest = Math.max(0, ...[...segments, ...scenes].map((item) => Number(item.end ?? item.start ?? 0) || 0));
+  const withHours = latest >= 3600;
+  const rows = scenes.map((scene) => {
+    const shown = scene.description.replace(/\s+/g, ' ').trim();
+    const written = String(scene.on_screen_text || '').replace(/\s+/g, ' ').trim();
+    const start = Number(scene.start) || 0;
+    return { start, rank: 0, line: `[${clock(start, withHours)}] (picture) ${shown}${written ? ` On screen: "${written}"` : ''}` };
+  });
+  for (const block of segmentBlocks(segments)) {
+    rows.push({ start: block.start, rank: 1, line: `[${clock(block.start, withHours)}] ${block.text}` });
+  }
+  // At the same second the scene comes first: it is what the words are said over.
+  rows.sort((a, b) => a.start - b.start || a.rank - b.rank);
+  const lines = rows.map((row) => row.line);
+  if (typeof transcript === 'string' && transcript.trim()) lines.push('', 'What is said:', transcript.trim());
   return lines.join('\n');
 }
 
 function renderTranscripts(transcripts) {
   return transcripts
-    .map(({ transcript, info }, index) => {
+    .map(({ transcript, scenes, noTranscript, info }, index) => {
       const header = [];
       if (transcripts.length > 1) header.push(`# Video ${index + 1} of ${transcripts.length}`);
       if (info.title) header.push(`Title: ${info.title}`);
@@ -327,7 +367,12 @@ function renderTranscripts(transcripts) {
       if (info.duration) header.push(`Duration: ${clock(info.duration, Number(info.duration) >= 3600)}`);
       if (info.published_date) header.push(`Published: ${info.published_date}`);
       if (info.views != null) header.push(`Views: ${info.views}`);
-      const body = typeof transcript === 'string' ? transcript.trim() : renderSegments(transcript);
+      if (noTranscript) header.push(`Transcript: none (${noTranscript})`);
+      const body = scenes
+        ? renderTimeline(transcript, scenes)
+        : typeof transcript === 'string'
+          ? transcript.trim()
+          : renderSegments(transcript);
       return `${header.join('\n')}\n\n${body}`.trim();
     })
     .join('\n\n\n');
@@ -359,7 +404,12 @@ function print(result, options) {
       const text = renderTranscripts(transcripts);
       const path = writeFile(options.transcript, `${text}\n`);
       const words = text.split(/\s+/).length;
-      console.log(`Transcript written to ${path} (${transcripts.length > 1 ? `${transcripts.length} videos, ` : ''}about ${words} words).`);
+      const scenes = transcripts.reduce((count, item) => count + (item.scenes ? item.scenes.length : 0), 0);
+      const what = scenes ? `Transcript and ${scenes} scene${scenes === 1 ? '' : 's'}` : 'Transcript';
+      console.log(`${what} written to ${path} (${transcripts.length > 1 ? `${transcripts.length} videos, ` : ''}about ${words} words).`);
+      for (const item of transcripts) {
+        if (item.noTranscript) console.log(`No transcript for this video (${item.noTranscript}): the file holds its scenes.`);
+      }
       const info = transcripts[0].info;
       if (Object.keys(info).length) {
         const { title, channel, duration, views, likes, published_date: published, url } = info;
@@ -407,7 +457,8 @@ function usage(tools) {
     '',
     'Options:',
     '  --out FILE          write the full JSON result to FILE and print a short description',
-    '  --transcript FILE   write the transcript to FILE as text with timestamps, [m:ss] at each block',
+    '  --transcript FILE   write the transcript to FILE as text with timestamps, [m:ss] at each block;',
+    '                      with watch_video, the scenes too, in the order of the video, marked (picture)',
     '  --args FILE         read the arguments from a JSON file (key=value pairs then override it)',
     '  --no-wait           return the task_id of a background task without waiting',
     '  --timeout SECONDS   how long to wait for a background task (default 900)',
