@@ -1,16 +1,16 @@
 ---
 name: video-dataset
-description: Builds a spreadsheet from many online videos - finds them (a TikTok search, a TikTok profile, a YouTube search or a list of links), extracts the same fields from what is said in each one, and writes a CSV or JSON file with one row per video. Use when the user asks for a CSV, a table, a spreadsheet or a dataset built from several videos, for example the product, the price, the claims or the creator's opinion in the most liked TikToks about a topic, or wants to compare what creators say, track mentions of a brand or product, or collect structured data from videos at volume.
+description: Builds a spreadsheet from many online videos - finds them (a TikTok search, a TikTok profile, a YouTube search or a list of links), extracts the same fields from what is said in each one, and from what is shown when asked, and writes a CSV or JSON file with one row per video. Use when the user asks for a CSV, a table, a spreadsheet or a dataset built from several videos, for example the product, the price, the claims or the creator's opinion in the most liked TikToks about a topic, or wants to compare what creators say, track mentions of a brand or product, or collect structured data from videos at volume.
 license: MIT
 compatibility: Needs a VidNavigator API key, and either the VidNavigator MCP server or Node.js 18+ with network access to api.vidnavigator.com.
 metadata:
   author: VidNavigator
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Build a dataset from videos
 
-Find the videos, extract the same fields from each one, write one row per video. The fields come from what is said in each video, read by `extract_video_data`: a search result's caption is not a source for them.
+Find the videos, extract the same fields from each one, write one row per video. The fields come from what is said in each video and, with `include_scenes`, from what it shows, read by `extract_video_data`: a search result's caption is not a source for them.
 
 ## Calling VidNavigator
 
@@ -64,6 +64,12 @@ Use the same schema for every video of the run.
 
 Videos without captions are transcribed automatically, except on YouTube, where a video without captions fails: record the failure and move on.
 
+### When a field is on screen, not said
+
+Add `include_scenes=true` when a column can only be read from the picture: a price or a product name shown but never spoken, a text overlay, a recipe's quantities, or videos with music and no speech (frequent on TikTok). The extraction then also reads what each video shows, scene by scene, with the text on screen, and the task's result carries `frames_analyzed`.
+
+It costs more per video (see Credits), so decide it on the first video: run it once without and once with `include_scenes`, compare the fields, and keep it only if it fills columns that stay empty otherwise. Tell the user which you chose and why.
+
 ## 5. Write the file
 
 - One row per video: the facts from the search (link, creator, date, views, likes), then the extracted fields.
@@ -75,8 +81,10 @@ For more than a few dozen videos, write a short script that loops over the links
 
 ## What the fields come from
 
-Extraction reads what is **said** in a video (captions, or speech-to-text) and its details. It does not see the picture: a price shown on screen but never spoken is not found.
+By default extraction reads what is **said** in a video (captions, or speech-to-text) and its details. It does not see the picture: a price shown on screen but never spoken is not found.
+
+With `include_scenes=true` it also reads what is **shown**: the scenes of the video, each with a description of the picture and the text on screen. Something visible for an instant between two scenes can still be missed.
 
 ## Credits
 
-Searches are billed by the number of videos returned, extraction by the length of the transcript. Checking a task is free. `get_usage` gives the balance: call it when the user asks, or before a run of several hundred videos.
+Searches are billed by the number of videos returned, extraction by the length of the text read. `include_scenes` adds a charge per frame analyzed: 1 credit per 1,000 frames, with at least 334 frames per hour of video (a one-minute video is a few dozen frames). Checking a task is free. `get_usage` gives the balance: call it when the user asks, or before a run of several hundred videos.
