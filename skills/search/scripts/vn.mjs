@@ -17,7 +17,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 
-const VERSION = '1.1.0';
+const VERSION = '1.2.0';
 const SERVER_URL = process.env.VIDNAVIGATOR_MCP_URL || 'https://api.vidnavigator.com/mcp/';
 const KEY_FILE = join(homedir(), '.config', 'vidnavigator', 'api_key');
 const KEY_PAGE = 'https://vidnavigator.com/studio/api';

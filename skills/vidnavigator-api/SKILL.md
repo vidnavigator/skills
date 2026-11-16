@@ -4,7 +4,7 @@ description: Writes code that uses the VidNavigator API and its Python and JavaS
 license: MIT
 metadata:
   author: VidNavigator
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Build with the VidNavigator API
@@ -42,6 +42,7 @@ const vn = new VidNavigatorClient({ apiKey: process.env.VIDNAVIGATOR_API_KEY! })
 | What a video shows, scene by scene, next to its transcript | `client.watch_video(video_url=...)` | `vn.watch(url)` | `POST /watch/async` |
 | Summary, people, subjects, or an answer to a question | `client.analyze_video(video_url=..., query=...)` | `vn.analyzeVideo({ video_url, query })` | `POST /analyze/video` |
 | Your own fields out of a video, as JSON | `client.extract_video_data(video_url=..., schema=...)` | `vn.extractVideo({ video_url, schema })` | `POST /extract/video/async` |
+| The same two, also from what the video shows (text on screen, little or no speech) | add `include_scenes=True` | add `include_scenes: true` | add `"include_scenes": true` |
 | YouTube videos for a query, ranked, with the best moment | `client.search_youtube(query=..., max_results=...)` | `vn.searchYouTube({ query, max_results })` | `POST /youtube/search` |
 | TikTok videos for a keyword | `client.search_tiktok(query=..., max_results=...)` | `vn.tiktokSearch({ query, max_results })` | `POST /tiktok/search` |
 | The videos of a TikTok account | `client.scrape_tiktok_profile(profile_url=...)` | `vn.tiktokProfile(profileUrl)` | `POST /tiktok/profile` |
@@ -49,6 +50,7 @@ const vn = new VidNavigatorClient({ apiKey: process.env.VIDNAVIGATOR_API_KEY! })
 | One TikTok LIVE room, with its latest comments | `client.get_tiktok_live_room(username=..., include_comments=True)` | `vn.getTikTokLiveRoom({ username, include_comments: true })` | `POST /tiktok/live/room` |
 | The claim made in a post on X | `client.get_tweet_statement(tweet_id=...)` | `vn.tweetStatement(tweetId)` | `POST /tweet/statement/async` |
 | Your own audio or video file | `client.upload_file(path, wait_for_completion=True)` | `vn.uploadFile({ filePath, wait_for_completion: true })` | `POST /upload/file` |
+| The scenes of your own video file, analyzed once and kept with it | `client.upload_file(path, include_scenes=True)` or `client.analyze_file_scenes(file_id)` | `vn.uploadFile({ filePath, include_scenes: true })` or `vn.analyzeFileScenes(file_id)` | `POST /upload/file`, `POST /file/{file_id}/scenes` |
 | Credits left | `client.get_usage()` | `vn.getUsage()` | `GET /usage` |
 
 Captions first, speech-to-text second: try the transcript, and fall back to transcription when it is not available.
@@ -121,6 +123,7 @@ Every SDK error extends `VidNavigatorError` and carries `status_code` and a mach
 | 402 | `PaymentRequiredError` | Not enough credits |
 | 403 | `AccessDeniedError` | The content needs a login or an age check |
 | 404 | `NotFoundError` | No transcript, no such video or file, unknown or expired `task_id` |
+| 409 | `ScenesNotAvailableError` | `include_scenes` on an uploaded file whose scenes are not there yet: `scenes_status` says whether to start them or to wait |
 | 429 | `RateLimitExceeded` (Python), `RateLimitExceededError` (JavaScript); `TooManyActiveJobsError` | Too many requests; too many jobs running |
 | 451 | `GeoRestrictedError` | Content not available in the region |
 | 503 | `SystemOverloadError` | Temporary overload: retry after `retry_after_seconds` |
@@ -129,7 +132,8 @@ Waiting for a job that outlasts its timeout raises `JobTimeoutError` (Python) or
 
 ## Good practice
 
-- Transcripts, analysis and extraction read what is **said** in a video and its details. What it **shows** (the scenes and the text on screen) comes from `watch`.
+- Transcripts, analysis and extraction read what is **said** in a video and its details. What it **shows** (the scenes and the text on screen) comes from `watch`, and analysis and extraction read it too with `include_scenes` (SDKs 2.5.0). Ask for it when the answer may be on screen: it adds a charge per frame analyzed, 1 credit per 1,000 frames with at least 334 frames per hour of video.
+- A long video analyzed with its scenes runs as a job: `client.submit_analyze_video(...)` in Python, `vn.analyze(...)` in JavaScript, `POST /analyze/video/async` over HTTP.
 - Test with one short video before a batch, and bound every search with `max_results`.
 - Pass `include_usage=True` to see what a call consumed; what each operation costs: https://docs.vidnavigator.com/api-reference/usage-costs.md
 - Rate limits per endpoint: https://docs.vidnavigator.com/api-reference/rate-limiting.md. On `429`, wait and retry with backoff.
