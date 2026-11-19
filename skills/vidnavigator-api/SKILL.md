@@ -4,7 +4,7 @@ description: Writes code that uses the VidNavigator API and its Python and JavaS
 license: MIT
 metadata:
   author: VidNavigator
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # Build with the VidNavigator API
