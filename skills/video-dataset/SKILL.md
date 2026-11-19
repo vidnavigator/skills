@@ -62,7 +62,7 @@ Use the same schema for every video of the run.
 1. Run **one** video first: `extract_video_data` with `video_url`, `schema` and, when useful, `what_to_extract` (one sentence of guidance). It runs as a background task (`task_type` `extract_video`) and returns the fields under `result`, with the video's details under `video_info`. Check that the fields come back as intended, and adjust the schema now if they do not.
 2. Then run the rest, at most 10 at a time. The first call with a new schema prepares it for the following ones, so do not start the batch before the first video has finished.
 
-Videos without captions are transcribed automatically, except on YouTube, where a video without captions fails: record the failure and move on.
+Videos without captions are transcribed automatically, YouTube included. A video that still fails (private, removed, no speech): record the failure and move on.
 
 ### When a field is on screen, not said
 

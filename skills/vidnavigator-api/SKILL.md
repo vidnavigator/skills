@@ -38,7 +38,7 @@ const vn = new VidNavigatorClient({ apiKey: process.env.VIDNAVIGATOR_API_KEY! })
 | Need | Python | JavaScript | HTTP |
 |---|---|---|---|
 | Captions of a video (YouTube, TikTok, X, Facebook, Vimeo, Dailymotion, Loom, Snapchat) | `client.get_transcript(video_url=...)` | `vn.getTranscript({ video_url })` | `POST /transcript` |
-| Speech-to-text when there are no captions (Instagram, and any platform but YouTube) | `client.transcribe_video(video_url=...)` | `vn.transcribe(url)` | `POST /transcribe/async` |
+| Speech-to-text when there are no captions (Instagram, YouTube and every other platform) | `client.transcribe_video(video_url=...)` | `vn.transcribe(url)` | `POST /transcribe/async` |
 | What a video shows, scene by scene, next to its transcript | `client.watch_video(video_url=...)` | `vn.watch(url)` | `POST /watch/async` |
 | Summary, people, subjects, or an answer to a question | `client.analyze_video(video_url=..., query=...)` | `vn.analyzeVideo({ video_url, query })` | `POST /analyze/video` |
 | Your own fields out of a video, as JSON | `client.extract_video_data(video_url=..., schema=...)` | `vn.extractVideo({ video_url, schema })` | `POST /extract/video/async` |
@@ -65,7 +65,7 @@ def read_video(url: str) -> str:
         return client.transcribe_video(video_url=url, transcript_text=True).data.transcript
 ```
 
-Without `transcript_text`, `transcript` is a list of segments with `text`, `start` and `end` in seconds; the video's details are in `video_info`. A YouTube video without captions cannot be transcribed.
+Without `transcript_text`, `transcript` is a list of segments with `text`, `start` and `end` in seconds; the video's details are in `video_info`. A video without captions, on YouTube too, can be transcribed with speech-to-text.
 
 ## Background jobs
 
