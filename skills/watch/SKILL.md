@@ -35,7 +35,7 @@ Each step names a VidNavigator tool and its arguments. Call it in whichever way 
    - An Instagram carousel or a Snapchat highlight holds several videos: `?img_index=N` in the link selects one (the first by default).
 2. **No speech?** A video without speech is not an error: its scenes come back with `transcript_error` saying why. Answer from the scenes and say that nothing is said.
 3. **Only the words are wanted?** When the request is only for the text of what is said (the full transcript of a talk, or its translation), the picture adds nothing: call `get_video_transcript` with `video_url` instead. If it fails with `transcript_not_available`, or for Instagram, call `transcribe_video` (speech-to-text on every platform, YouTube included, `task_type` `transcribe`).
-4. **Answer from both.** Summaries, notes, quotes, translations, descriptions and lists of claims are yours to write from the transcript and the scenes. When it matters, say where a fact comes from: what the video says, what it shows, or the text on screen, quoted as written. Do not call `analyze_video` for work you can do from what you already hold.
+4. **Answer from both.** Summaries, notes, quotes, translations, descriptions and lists of claims are yours to write from the transcript and the scenes. When it matters, say where a fact comes from: what the video says, what it shows, or the text on screen, quoted as written. Do not call another tool for what you can write from what you already hold.
 5. **Point to the moment.** Give timestamps as `m:ss`. For YouTube, link them: `https://youtu.be/VIDEO_ID?t=SECONDS`.
 
 ## What this reads, and what it does not

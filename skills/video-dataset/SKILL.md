@@ -44,16 +44,21 @@ Search results already hold facts to keep as columns: the link, the creator, the
 
 ## 3. Write the schema once
 
-`extract_video_data` takes a `schema`: each field name mapped to `{"type": ..., "description": ...}`. Types are capitalized: `String`, `Number`, `Integer`, `Boolean`, `Enum` (with an `enum` list of allowed values), `Array` (with `items`, a field definition) and `Object` (with `properties`). At most 10 fields per level and 3 levels. The description is what the extraction follows, so make it precise, and say what to return when the video does not give the information.
+`extract_video_data` takes a `schema`: a standard JSON Schema whose root is an object, `{"type": "object", "properties": {...}}`. Each property has a lowercase `type` (`string`, `number`, `integer`, `boolean`, `array` with `items`, `object` with `properties`) and a `description`; `enum` lists the allowed values. At most 10 fields per level and 3 levels. The description is what the extraction follows, so make it precise, and say what to return when the video does not give the information.
 
 ```json
 {
-  "product": { "type": "String", "description": "Product the video is about. Empty if none." },
-  "price_usd": { "type": "Number", "description": "Price stated in the video, in US dollars. Null if no price is said." },
-  "verdict": { "type": "Enum", "enum": ["positive", "mixed", "negative"], "description": "The creator's overall opinion of the product." },
-  "claims": { "type": "Array", "description": "Each factual claim made about the product.", "items": { "type": "String", "description": "One claim, as one short sentence" } }
+  "type": "object",
+  "properties": {
+    "product": { "type": "string", "description": "Product the video is about. Empty if none." },
+    "price_usd": { "type": "number", "description": "Price stated in the video, in US dollars. Null if no price is said." },
+    "verdict": { "type": "string", "enum": ["positive", "mixed", "negative"], "description": "The creator's overall opinion of the product." },
+    "claims": { "type": "array", "description": "Each factual claim made about the product.", "items": { "type": "string", "description": "One claim, as one short sentence" } }
+  }
 }
 ```
+
+When the user describes the columns in words rather than fields, `what_to_extract` alone (for example "the product, its price in US dollars and the creator's verdict") writes the schema: it comes back as `schema` beside the result, to pass as `schema` for the other videos.
 
 Use the same schema for every video of the run.
 
@@ -87,4 +92,4 @@ With `include_scenes=true` it also reads what is **shown**: the scenes of the vi
 
 ## Credits
 
-Searches are billed by the number of videos returned, extraction by the length of the text read. `include_scenes` adds a charge per frame analyzed: 1 credit per 1,000 frames, with at least 334 frames per hour of video (a one-minute video is a few dozen frames). Checking a task is free. `get_usage` gives the balance: call it when the user asks, or before a run of several hundred videos.
+Searches are billed by the number of videos returned, extraction by the length of the text read. `include_scenes` adds a charge per frame analyzed: 1 credit per 2,000 frames, with at least 667 frames per hour of video (a one-minute video is a few dozen frames). Checking a task is free. `get_usage` gives the balance: call it when the user asks, or before a run of several hundred videos.
