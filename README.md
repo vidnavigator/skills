@@ -177,7 +177,7 @@ node skills/watch/scripts/vn.mjs setup
 - `/watch` also reads what is **shown**: the scenes, each with a description of the picture and the text on screen. The picture is followed scene by scene, so something visible for an instant can be missed. `video-dataset` reads it too when a column is on screen and not said (`include_scenes`). The other skills work from what is said.
 - A live stream, or a clip of a few seconds, has no picture to read; `/watch` then answers from the speech.
 - A private, deleted, age-restricted or region-locked video returns an error, which the agent reports as it is.
-- A YouTube video without captions cannot be transcribed. Every other platform can.
+- A video without captions is transcribed from its audio, on YouTube as on every other platform.
 
 ## Credits
 
