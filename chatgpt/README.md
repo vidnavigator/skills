@@ -21,7 +21,7 @@ The build refuses to run until `review.demo_recording_url` holds the link to the
 2. Open **Plugins**, select **Upload new or existing plugin**, choose the developer identity, **Upload plugin**, and pick the ZIP.
 3. **Metadata & Skills**: resolve any issue the portal lists.
 4. **MCPs**: select the server, then **Connect**. The portal shows a domain-verification token: it must be served as plain text at `https://api.vidnavigator.com/.well-known/openai-apps-challenge` before you go on. Then sign in to VidNavigator and allow the connection.
-5. Wait for the tool scan, and check that it finds the 19 tools.
+5. Wait for the tool scan, and check that it finds the 17 tools.
 6. **Review information → Review details**: enter the reviewer account below, then **Save details**.
 7. **Submit for review**. Once approved, open the approved version and select **Publish plugin**.
 
