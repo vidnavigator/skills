@@ -57,4 +57,4 @@ Give the room's link with every room you mention, and the time of your reading. 
 
 ## Credits
 
-The search is billed by the number of rooms returned, a room once, and twice with its comments: ask for comments only when the user wants the chat. Checking a task is free.
+The search is billed per 30 rooms returned, at least 1 per search and 1 per 5 TikTok pages read; a room is billed once, and twice with its comments: ask for comments only when the user wants the chat. Checking a task is free.

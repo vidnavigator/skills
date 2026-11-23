@@ -90,4 +90,4 @@ A search that returns nothing useful is an answer: say so, and offer one other w
 
 ## Credits
 
-A TikTok search is billed by the number of videos TikTok returned, including those the filters removed, and a profile by the page: `max_results`, `max_posts` and a date bound are what keep a run small. A YouTube search is the most expensive call here: it is billed for each candidate it reads, plus one analysis, so keep `max_results` low and tell the user before running more than two searches for one question. Checking a task is free.
+A TikTok search is billed per 30 videos returned, at least 1 per search and 1 per 5 TikTok pages read (videos the filters drop are not billed), and a profile by the page: `max_results`, `max_posts` and a date bound are what keep a run small. A YouTube search is the most expensive call here: it is billed for each candidate it reads, plus one analysis, so keep `max_results` low and tell the user before running more than two searches for one question. Checking a task is free.

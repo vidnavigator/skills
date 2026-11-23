@@ -92,4 +92,4 @@ With `include_scenes=true` it also reads what is **shown**: the scenes of the vi
 
 ## Credits
 
-Searches are billed by the number of videos returned, extraction by the length of the text read. `include_scenes` adds a charge per frame analyzed: 1 credit per 2,000 frames, with at least 667 frames per hour of video (a one-minute video is a few dozen frames). Checking a task is free. `get_usage` gives the balance: call it when the user asks, or before a run of several hundred videos.
+A TikTok search is billed per 30 videos returned (at least 1 per search and 1 per 5 TikTok pages read), a YouTube search per candidate video it reads, extraction by the length of the text read. `include_scenes` adds a charge per frame analyzed: 1 credit per 2,000 frames, with at least 667 frames per hour of video (a one-minute video is a few dozen frames). Checking a task is free. `get_usage` gives the balance: call it when the user asks, or before a run of several hundred videos.
