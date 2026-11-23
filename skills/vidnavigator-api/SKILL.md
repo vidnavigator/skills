@@ -143,14 +143,14 @@ Every SDK error extends `VidNavigatorError` and carries `status_code` and a mach
 | Status | Class | Meaning |
 |---|---|---|
 | 400 | `BadRequestError` | Invalid parameters or schema |
-| 401 | `AuthenticationError` | Missing or invalid API key |
-| 402 | `PaymentRequiredError` | Not enough credits |
-| 403 | `AccessDeniedError` | The content needs a login or an age check |
+| 401 | `AuthenticationError` | Missing, invalid or deactivated API key |
+| 402 | `PaymentRequiredError` | Not enough credits, or the storage of the plan is full (`storage_quota_exceeded`) |
+| 403 | `AccessDeniedError` | The content needs a login or an age check (`content_restricted`); the plan does not include the endpoint, or only the member who uploaded a file may cancel or delete it (`access_denied`) |
 | 404 | `NotFoundError` | No transcript, no such video or file, unknown or expired `task_id` |
 | 409 | `ScenesNotAvailableError` | `include_scenes` on an uploaded file whose scenes are not there yet: `scenes_status` says whether to start them or to wait |
 | 429 | `RateLimitExceeded` (Python), `RateLimitExceededError` (JavaScript); `TooManyActiveJobsError` | Too many requests; too many jobs running |
 | 451 | `GeoRestrictedError` | Content not available in the region |
-| 503 | `SystemOverloadError` | Temporary overload: retry after `retry_after_seconds` |
+| 503 | `SystemOverloadError` | Temporary overload (`system_overload`, retry after `retry_after_seconds`), or the service briefly could not authenticate or bill the request (`service_unavailable`, nothing charged): retry |
 
 Waiting for a job that outlasts its timeout raises `JobTimeoutError` (Python) or `TaskTimeoutError` (JavaScript): the job keeps running and can be resumed with its `task_id`.
 
