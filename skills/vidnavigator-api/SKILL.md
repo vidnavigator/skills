@@ -160,6 +160,6 @@ Waiting for a job that outlasts its timeout raises `TaskTimeoutError`: the job k
 - On a post on X, `include_scenes` reads the post's video and the quoted post's video: the result's `data` then has `frames_analyzed`, and `scenes_error` when a video's picture could not be read (that video is then summarized from its transcript). If the frames cannot be paid for, the request answers `402`.
 - Test with one short video before a batch, and bound every search with `max_results`.
 - Pass `include_usage=True` to see what a call consumed; what each operation costs: https://docs.vidnavigator.com/api-reference/usage-costs.md
-- Rate limits, per organization with polls counted apart: https://docs.vidnavigator.com/api-reference/rate-limiting.md. On `429 rate_limit_exceeded`, wait `Retry-After` seconds and retry.
+- Rate limits: https://docs.vidnavigator.com/api-reference/rate-limiting.md. On `429`, wait and retry.
 - TikTok search takes a `country` (default `gb`, `us` not available); TikTok LIVE search takes one too (default `us`).
 - For an agent rather than code, the same operations are served as MCP tools at `https://api.vidnavigator.com/mcp/`: https://docs.vidnavigator.com/mcp-server.md
