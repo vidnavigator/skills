@@ -92,7 +92,8 @@ if (plugin) {
     for (const field of ['description', 'prompt', 'expected_behavior']) {
       if (!text(testCase[field], 4000)) fail('plugin.json', `positive test case ${index + 1}: ${field} is missing`);
     }
-    if (!Array.isArray(testCase.tools_triggered) || !testCase.tools_triggered.length) fail('plugin.json', `positive test case ${index + 1}: tools_triggered is missing`);
+    // The portal takes a string here, not a list: the tool names separated by commas.
+    if (!text(testCase.tools_triggered, 4000)) fail('plugin.json', `positive test case ${index + 1}: tools_triggered must be a string of tool names separated by commas`);
   });
   negative.forEach((testCase, index) => {
     for (const field of ['description', 'prompt']) {
@@ -115,7 +116,8 @@ if (plugin) {
       });
       const tools = new Set(((await response.json()).result?.tools || []).map((tool) => tool.name));
       for (const testCase of positive) {
-        for (const name of testCase.tools_triggered || []) {
+        const names = typeof testCase.tools_triggered === 'string' ? testCase.tools_triggered.split(',') : [];
+        for (const name of names.map((part) => part.trim()).filter(Boolean)) {
           if (!tools.has(name)) fail('plugin.json', `test case "${testCase.description}": the server has no tool ${name}`);
         }
       }
