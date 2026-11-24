@@ -57,6 +57,12 @@
               "expected_behavior": "extract_video_data starts a background task; get_task_status returns the extracted fields. ChatGPT gives the speaker (Ken Robinson), a one-sentence thesis about schools and creativity, and a list of people mentioned in the talk, such as Gillian Lynne."
             },
             {
+              "description": "Watch a video: what it shows, scene by scene, when almost nothing is said.",
+              "prompt": "Watch this TikTok and describe what happens on screen, step by step, with the second of each step: https://www.tiktok.com/@pubity/video/7708311954716380419",
+              "tools_triggered": ["watch_video", "get_task_status"],
+              "expected_behavior": "watch_video starts a background task; get_task_status returns the scenes of the 25-second video. The speech is only \"No way!\", so ChatGPT describes the picture: SpaceX's Starship descending through the clouds, approaching the launch tower, then caught by the tower's arms around 16-18 s, with the on-screen text \"SpaceX just caught Starship with the tower for the first time\"."
+            },
+            {
               "description": "Search YouTube for a video and the passage that matches the request.",
               "prompt": "Find a YouTube video where Neil deGrasse Tyson explains gravity, and link the exact moment.",
               "tools_triggered": ["search_videos"],
@@ -67,12 +73,6 @@
               "prompt": "Find the five most liked TikToks about creatine gummies this month in the UK.",
               "tools_triggered": ["search_tiktok", "get_task_status"],
               "expected_behavior": "search_tiktok runs with sort_by most_liked, a one-month window and country gb; get_task_status returns the videos. ChatGPT gives a table of five TikToks with link, creator, date, views and likes, and states the query, country and period it searched."
-            },
-            {
-              "description": "List the latest videos of a TikTok account.",
-              "prompt": "List the last three videos posted by https://www.tiktok.com/@nasa",
-              "tools_triggered": ["scrape_tiktok_profile", "get_task_status"],
-              "expected_behavior": "scrape_tiktok_profile runs with max_posts 3; get_task_status returns the videos. ChatGPT lists three recent videos of the NASA TikTok account with link, publication date, views and likes."
             }
           ],
           "negative": [
@@ -93,10 +93,10 @@
             }
           ]
         },
-        "demo_recording_url": "TODO: link to the demo video"
+        "demo_recording_url": "https://youtu.be/I6J36df1rVI"
       },
       "publication": {
-        "release_notes": "First release: transcripts, speech-to-text, summaries and questions, structured data extraction, YouTube and TikTok search, TikTok LIVE, posts on X, and uploaded files."
+        "release_notes": "First release: transcripts, speech-to-text, scene-by-scene watching, summaries and questions, structured data extraction, YouTube and TikTok search, TikTok LIVE, posts on X, and uploaded files."
       }
     }
   }
