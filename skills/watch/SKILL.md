@@ -30,7 +30,6 @@ Each step names a VidNavigator tool and its arguments. Call it in whichever way 
 ## Steps
 
 1. **Watch the video.** Call `watch_video` with `video_url`. It runs as a background task (`task_type` `watch`) and returns the video's details (title, channel, duration, views, publication date), the transcript as timestamped segments, and `scenes`: for each one its `start` and `end` in seconds, a `description` of the picture and `on_screen_text`, the text readable on screen.
-   - `detail` sets how closely the picture is followed. Leave the default (`auto`); use `high` when the question is about something brief or small on screen, `low` when a rough idea of the picture is enough.
    - When the transcript is already in the conversation or in a file, pass `include_transcript=false` to get the scenes alone.
    - An Instagram carousel or a Snapchat highlight holds several videos: `?img_index=N` in the link selects one (the first by default).
 2. **No speech?** A video without speech is not an error: its scenes come back with `transcript_error` saying why. Answer from the scenes and say that nothing is said.
@@ -41,7 +40,7 @@ Each step names a VidNavigator tool and its arguments. Call it in whichever way 
 ## What this reads, and what it does not
 
 - It reads what is **said** (the platform's captions, or speech-to-text), what is **shown** (people, setting, action, objects) and the **text on screen** (captions, titles, signs), plus the video's details.
-- The picture is described scene by scene: something visible for an instant can be missed. Before answering that something is not in the video, watch it again with `detail=high`.
+- The picture is described scene by scene: something visible for an instant can be missed. When you answer that something is not in the video, say that it does not appear in the scenes, not that it is absent.
 - A description says what is visible. Do not give a person's name from the picture alone: take it from the speech, the text on screen or the video's details.
 - A live stream, or a clip of a few seconds, has no picture to read (`frames_not_available`), and a video longer than 2 hours is refused except on YouTube (`video_too_long`): read the transcript instead (step 3) and say that you could only read the speech.
 - A private, deleted, age-restricted or region-locked video returns an error. Report its message as it is, without guessing the content.
