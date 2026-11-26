@@ -40,8 +40,8 @@ const vn = new VidNavigatorClient({ apiKey: process.env.VIDNAVIGATOR_API_KEY! })
 | Captions of a video (YouTube, TikTok, X, Facebook, Vimeo, Dailymotion, Loom, Snapchat) | `client.get_transcript(video_url=...)` | `vn.getTranscript({ video_url })` | `POST /transcript` |
 | Speech-to-text when there are no captions (Instagram, YouTube and every other platform) | `client.transcribe_video(video_url=...)` | `vn.transcribe(url)` | `POST /transcribe/async` |
 | What a video shows, scene by scene, next to its transcript | `client.watch_video(video_url=...)` | `vn.watch(url)` | `POST /watch/async` |
-| Summary, people, subjects, or an answer to a question | `client.extract_video_data(video_url=..., what_to_extract="a summary, and the answer to: ...")` | `vn.extractVideo({ video_url, what_to_extract })` | `POST /extract/video/async` |
-| Your own fields out of a video, as JSON | `client.extract_video_data(video_url=..., schema=...)` | `vn.extractVideo({ video_url, schema })` | `POST /extract/video/async` |
+| Summary, people, subjects, or an answer to a question | `client.extract_video_data(video_url=..., what_to_extract="a summary, and the answer to: ...")` | `vn.extractVideo({ video_url, what_to_extract })` | `POST /extract/async` |
+| Your own fields out of a video, as JSON | `client.extract_video_data(video_url=..., schema=...)` | `vn.extractVideo({ video_url, schema })` | `POST /extract/async` |
 | The same two, also from what the video shows (text on screen, little or no speech) | add `include_scenes=True` | add `include_scenes: true` | add `"include_scenes": true` |
 | The same from your own uploaded file | `client.extract_file_data(file_id=..., what_to_extract=...)` | `vn.extractFileData({ file_id, what_to_extract })` | `POST /extract/file` |
 | YouTube videos for a query, ranked, with the best moment | `client.search_youtube(query=..., max_results=...)` | `vn.searchYouTube({ query, max_results })` | `POST /youtube/search` |
@@ -52,7 +52,7 @@ const vn = new VidNavigatorClient({ apiKey: process.env.VIDNAVIGATOR_API_KEY! })
 | The claim made in a post on X | `client.get_tweet_statement(tweet_id=...)` | `vn.tweetStatement(tweetId)` | `POST /tweet/statement/async` |
 | The same, also from what the post's video shows | `client.get_tweet_statement(tweet_id=..., include_scenes=True)` | `vn.tweetStatement({ tweet_id, include_scenes: true })` | add `"include_scenes": true` |
 | Your own audio or video file | `client.upload_file(path, wait_for_completion=True)` | `vn.uploadFile({ filePath, wait_for_completion: true })` | `POST /upload/file` |
-| The scenes of your own video file, analyzed once and kept with it | `client.upload_file(path, include_scenes=True)` or `client.analyze_file_scenes(file_id)` | `vn.uploadFile({ filePath, include_scenes: true })` or `vn.analyzeFileScenes(file_id)` | `POST /upload/file`, `POST /file/{file_id}/scenes` |
+| The scenes of your own video file, analyzed once and kept with it | `client.upload_file(path, include_scenes=True)` or `client.watch_file(file_id)` | `vn.uploadFile({ filePath, include_scenes: true })` or `vn.watchFile(file_id)` | `POST /upload/file`, `POST /watch/file` |
 | Credits left | `client.get_usage()` | `vn.getUsage()` | `GET /usage` |
 
 There is no separate analysis call: SDK 3.0.0 removed `analyze_video`, `submit_analyze_video` and `analyze_file` (JavaScript `analyzeVideo`, `analyzeFile` and `vn.analyze`), and the API no longer has `/analyze/video` or `/analyze/file`. Summaries and answers to questions come from extraction, as above. When you meet the old calls in existing code, replace them: [Moving from the analyze endpoints](https://docs.vidnavigator.com/guides/analyzing-videos.md).
@@ -93,7 +93,7 @@ const results = await Promise.allSettled(jobs.map((job) => job.result()));
 - JavaScript: `vn.transcribe`, `vn.extractVideo`, `vn.tweetStatement`, `vn.tiktokProfile`, `vn.tiktokSearch` and `vn.tiktokLiveSearch` each have `.submit(...)` and `.resume(task_id)`.
 - An account runs a limited number of jobs at once: past it, a submit raises `TooManyActiveJobsError` and creates nothing. For a large batch, keep a bounded number running and submit the next one as each finishes.
 - Results are kept for one hour after a job finishes. Store the `task_id` when the process may restart.
-- Over HTTP: the submit route answers `202` with a `task_id`; poll `GET` on the same path with the id (`GET /transcribe/{task_id}`, `GET /tiktok/search/{task_id}`...) until `task_status` is `completed` or `failed`. The synchronous `POST /transcribe` and `POST /extract/video` refuse media longer than 10 minutes: use the `/async` routes.
+- Over HTTP: the submit route answers `202` with a `task_id`; poll `GET` on the same path with the id (`GET /transcribe/{task_id}`, `GET /tiktok/search/{task_id}`...) until `task_status` is `completed` or `failed`. The synchronous `POST /transcribe` and `POST /extract` refuse media longer than 10 minutes: use the `/async` routes.
 - A job can call a webhook when it finishes instead of being polled (`webhook_url`). Verify the signature with `construct_webhook_event` (Python) or `constructWebhookEvent` (JavaScript), on the raw request body: https://docs.vidnavigator.com/webhooks.md
 
 ## Extraction
@@ -156,7 +156,7 @@ Waiting for a job that outlasts its timeout raises `TaskTimeoutError`: the job k
 
 ## Good practice
 
-- Transcripts, extraction and tweet analysis read what is **said** in a video and its details. What it **shows** (the scenes and the text on screen) comes from `watch`, and extraction and tweet analysis read it too with `include_scenes` (SDKs 2.5.0 for extraction, 3.0.0 for tweets). Ask for it when the answer may be on screen: it adds a charge per frame analyzed, 1 credit per 2,000 frames with at least 667 frames per hour of video.
+- Transcripts, extraction and tweet analysis read what is **said** in a video and its details. What it **shows** (the scenes and the text on screen) comes from `watch`, and extraction and tweet analysis read it too with `include_scenes` (SDKs 2.5.0 for extraction, 3.0.0 for tweets). Ask for it when the answer may be on screen: it adds a charge by the length of the video watched, per started minute.
 - On a post on X, `include_scenes` reads the post's video and the quoted post's video: the result's `data` then has `frames_analyzed`, and `scenes_error` when a video's picture could not be read (that video is then summarized from its transcript). If the frames cannot be paid for, the request answers `402`.
 - Test with one short video before a batch, and bound every search with `max_results`.
 - Pass `include_usage=True` to see what a call consumed; what each operation costs: https://docs.vidnavigator.com/api-reference/usage-costs.md

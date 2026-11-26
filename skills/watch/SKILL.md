@@ -52,4 +52,4 @@ Videos that do not depend on each other can be watched in parallel. To find a vi
 
 ## Credits
 
-Every call uses the user's VidNavigator credits; checking a task is free. Watching costs more than reading a transcript: the picture is charged by the number of frames analyzed, which grows with the length of the video and with how often its picture changes. Do not watch again a video whose scenes are already in the conversation or in a file. Call `get_usage` only when the user asks for their balance.
+Every call uses the user's VidNavigator credits; checking a task is free. Watching costs more than reading a transcript: the picture is charged by the length of the video, per started minute. Do not watch again a video whose scenes are already in the conversation or in a file. Call `get_usage` only when the user asks for their balance.
