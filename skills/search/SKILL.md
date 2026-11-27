@@ -83,7 +83,7 @@ A search that returns nothing useful is an answer: say so, and offer one other w
 
 ## A post on X/Twitter
 
-1. Call `get_tweet_statement` with `tweet_id`: the digits at the end of the post's link. It reads the post, the post it quotes and its attached video or images, and returns `final_statement` (the claim, in one piece) with `detailed_analysis`, `topics`, `entities`, `claim_type` and `tone`. It runs as a background task (`task_type` `tweet_statement`). Add `include_scenes=true` when the claim may be in what the video shows rather than in what is said (a caption, a chart, a screenshot, a video without speech): it reads the scenes of the post's video and of the quoted post's video too, and adds a charge per frame read.
+1. Call `get_tweet_statement` with `tweet_id`: the digits at the end of the post's link. It reads the post, the post it quotes and its attached video or images, and returns `final_statement` (the claim, in one piece) with `detailed_analysis`, `topics`, `entities`, `claim_type` and `tone`. It runs as a background task (`task_type` `tweet_statement`). Add `include_scenes=true` when the claim may be in what the video shows rather than in what is said (a caption, a chart, a screenshot, a video without speech): it reads the scenes of the post's video and of the quoted post's video too, and adds a charge by the length of the videos watched.
 2. Show the user the claim as you understood it.
 3. Call `search_videos` twice with `final_statement` as the `query`: once with `purpose=support`, once with `purpose=oppose`, each with a small `max_results`.
 4. Report what each side says, with the linked moments. You report what the videos say: do not turn it into a verdict on the claim, and say when one side returned nothing.
